@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Education from './components/education';
 import General from './components/general';
-import Preview from './components/preview';
 import Work from './components/work';
 
 class App extends Component {
@@ -11,7 +10,6 @@ class App extends Component {
         <General />
         <Education />
         <Work />
-
       </div>
     )
   }

@@ -1,92 +1,83 @@
 /* eslint-disable no-useless-constructor */
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "../styles/general.css"
 import Preview from "./preview";
 
-class General extends Component {
-    constructor() {
-        super();
-        this.state = {
-            first: '',
-            last: '',
-            email: '',
-            phone: '',
-            info: [],
-            submitted: false
-        }
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.editForm = this.editForm.bind(this);
-    }
+const General = () => {
+    const [personalInfo, setPersonalInfo] = useState({
+        first: '',
+        last: '',
+        email: '',
+        phone: ''
+    })
+    const [submitted, setSubmitted] = useState(false);
+    const [info, setInfo] = useState([])
 
-    handleChange(e) {
-        const target = e.target;
-        const name = target.name;
 
-        this.setState({
-            [name]: target.value
+
+    const handleChange = (e) => {
+
+        const { name, value } = e.target;
+        setPersonalInfo((prevInfo) => {
+            let newInfo = { ...prevInfo, [name]: value };
+            return newInfo
         })
+
     }
 
-    handleSubmit(e) {
-        const { first, last, email, phone, info } = this.state
+    const handleSubmit = (e) => {
+
         e.preventDefault()
-        this.setState({
-            info: info.concat(first, last, email, phone),
-            submitted: true
-        })
+        setInfo(arr => [...arr, `${first}`, `${last}`, `${email}`, `${phone}`])
+        setSubmitted(true)
     }
 
-    editForm() {
-        this.setState({
-            info: this.state.info.slice(5),
-            submitted: false
-        })
-
+    const editForm = () => {
+        setInfo(arr => arr.slice(5))
+        setSubmitted(false)
     }
 
+    const { first, last, email, phone } = personalInfo;
 
 
-    render() {
-        const submitted = this.state.submitted;
+    return (
 
-        return (
-            <div>
-                <h3>Personal Information</h3>
-                {submitted === false &&
-                    <form onSubmit={this.handleSubmit}>
-                        <label>
-                            First Name:
-                            <input type="text" name="first" value={this.state.first} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Last Name:
-                            <input type="text" name="last" value={this.state.last} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Email:
-                            <input type="email" name="email" value={this.state.email} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Phone Number:
-                            <input type="tel" className="tel" name="phone" value={this.state.phone} onChange={this.handleChange} />
-                        </label>
-                        <div className="text-center">
-                            <button type="submit">Save</button>
-                        </div>
-                    </form>}
-                {submitted === true &&
-                    <Preview array={this.state.info} />
-                }
-                {submitted === true &&
-                    <div className="edit">
-                        <button onClick={this.editForm} >Edit</button>
+        <div>
+            <h3>Personal Information</h3>
+            {submitted === false &&
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        First Name:
+                        <input type="text" name="first" value={first} onChange={handleChange} />
+                    </label>
+                    <label>
+                        Last Name:
+                        <input type="text" name="last" value={last} onChange={handleChange} />
+                    </label>
+                    <label>
+                        Email:
+                        <input type="email" name="email" value={email} onChange={handleChange} />
+                    </label>
+                    <label>
+                        Phone Number:
+                        <input type="tel" className="tel" name="phone" value={phone} onChange={handleChange} />
+                    </label>
+                    <div className="text-center">
+                        <button type="submit">Save</button>
                     </div>
-                }
+                </form>}
+            {submitted === true &&
+                <Preview array={info} />
+            }
+            {submitted === true &&
+                <div className="edit">
+                    <button onClick={editForm} >Edit</button>
+                </div>
+            }
 
-            </div>
-        )
-    }
+        </div>
+    )
+
 
 }
 export default General

@@ -1,92 +1,78 @@
 /* eslint-disable no-useless-constructor */
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Preview from "./preview";
-import uniqid from 'uniqid'
 
 
-class Education extends Component {
-    constructor() {
-        super();
-        this.state = {
-            degree: '',
-            uni: '',
-            from: '',
-            to: '',
-            id: uniqid(),
-            info: [],
-            submitted: false
-        }
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.editForm = this.editForm.bind(this);
-    }
 
-    handleChange(e) {
-        const target = e.target;
-        const name = target.name;
+const Education = () => {
+    const [education, setEducation] = useState({
+        degree: '',
+        uni: '',
+        from: '',
+        to: ''
+    })
+    const [submitted, setSubmitted] = useState(false);
+    const [info, setInfo] = useState([])
 
-        this.setState({
-            [name]: target.value
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEducation((prevInfo) => {
+            let newInfo = { ...prevInfo, [name]: value };
+            return newInfo
         })
     }
 
-    handleSubmit(e) {
+    const handleSubmit = (e) => {
         e.preventDefault()
-        const { degree, uni, from, to, info } = this.state
-        this.setState({
-            info: info.concat(degree, uni, from, to),
-            id: uniqid(),
-            submitted: true
-        })
+        setInfo(arr => [...arr, `${degree}`, `${uni}`, `${from}`, `${to}`])
+        setSubmitted(true)
     }
 
-    editForm() {
-        this.setState({
-            submitted: false,
-            info: this.state.info.slice(5),
-        })
+    const editForm = () => {
+        setInfo(arr => arr.slice(5))
+        setSubmitted(false)
 
     }
 
-    render() {
-        const submitted = this.state.submitted;
-        return (
-            <div>
-                <h3>Education and Training</h3>
-                {submitted === false &&
-                    <form onSubmit={this.handleSubmit}>
-                        <label>
-                            Degree:
-                            <input type="text" name="degree" value={this.state.degree} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Organization:
-                            <input type="text" name="uni" value={this.state.uni} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            From
-                            <input type="date" className="date" name="from" value={this.state.from} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            To:
-                            <input type="date" className="date" name="to" value={this.state.to} onChange={this.handleChange} />
-                        </label>
-                        <div className="text-center">
-                            <button type="submit">Save</button>
-                        </div>
-                    </form>
-                }
-                {submitted === true &&
-                    <Preview array={this.state.info} />
-                }
-                {submitted === true &&
-                    <div className="edit">
-                        <button onClick={this.editForm} >Edit</button>
+    const { degree, uni, from, to } = education;
+
+
+    return (
+        <div>
+            <h3>Education and Training</h3>
+            {submitted === false &&
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Degree:
+                        <input type="text" name="degree" value={degree} onChange={handleChange} />
+                    </label>
+                    <label>
+                        Organization:
+                        <input type="text" name="uni" value={uni} onChange={handleChange} />
+                    </label>
+                    <label>
+                        From
+                        <input type="date" className="date" name="from" value={from} onChange={handleChange} />
+                    </label>
+                    <label>
+                        To:
+                        <input type="date" className="date" name="to" value={to} onChange={handleChange} />
+                    </label>
+                    <div className="text-center">
+                        <button type="submit">Save</button>
                     </div>
-                }
-            </div>
-        )
-    }
+                </form>
+            }
+            {submitted === true &&
+                <Preview array={info} />
+            }
+            {submitted === true &&
+                <div className="edit">
+                    <button onClick={editForm} >Edit</button>
+                </div>
+            }
+        </div>
+    )
 
 }
 export default Education
